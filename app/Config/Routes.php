@@ -1,13 +1,11 @@
 <?php
 
-use CodeIgniter\Router\RouteCollection;
+namespace Config;
 
-/**
- * @var RouteCollection $routes
- */
-$routes->get('/', 'BarcodeController::index');
-$routes->post('/barcode/upload', 'BarcodeController::upload');
+// Create a new instance of our RouteCollection
+$routes = Services::routes();
+
+$routes->get('/', 'BarcodeController::home');
 $routes->get('/barcode/show/(:num)', 'BarcodeController::show/$1');
-$routes->get('/barcode/generate/(:num)', 'BarcodeController::generate/$1');
 $routes->get('/barcode/file/(:num)', 'BarcodeController::file/$1');
-
+$routes->get('/barcode/generate/(:num)', 'BarcodeController::generate/$1');

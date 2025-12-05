@@ -7,70 +7,31 @@ use Endroid\QrCode\Builder\Builder;
 
 class BarcodeController extends BaseController
 {
-    /**
-     * =============== HALAMAN UTAMA ====================
-     * Menampilkan barcode dokumen PDF terbaru
-     */
+    // Halaman utama: tampilkan list PDF + tombol generate barcode
     public function home()
     {
-        $doc = (new DocumentModel())->orderBy('id', 'DESC')->first();
+        $docs = (new DocumentModel())->orderBy('id', 'DESC')->findAll();
 
-        if (!$doc) {
-            return "<h3>Belum ada dokumen PDF di database. Silakan upload di /barcode</h3>";
-        }
-
-        return view('barcode/home', [
-            'id'  => $doc['id'],
-            'doc' => $doc
-        ]);
+        return view('barcode/home', ['docs' => $docs]);
     }
 
-    /**
-     * =============== HALAMAN UPLOAD PDF ====================
-     * /barcode → upload PDF
-     */
-    public function index()
-    {
-        return view('barcode/upload');
-    }
-
-    public function upload()
-    {
-        $file = $this->request->getFile('pdf');
-
-        if (!$file->isValid()) {
-            return redirect()->back()->with('error', 'File bermasalah.');
-        }
-
-        $newName = $file->getRandomName();
-        $file->move(WRITEPATH . 'uploads', $newName);
-
-        $docModel = new DocumentModel();
-        $id = $docModel->insert([
-            'filename'      => $newName,
-            'original_name' => $file->getName()
-        ]);
-
-        return redirect()->to('/barcode/show/' . $id);
-    }
-
-    /**
-     * =============== HALAMAN SHOW ====================
-     * Menampilkan barcode + tombol buka PDF
-     */
+    // Halaman show: tampilkan barcode + tombol buka PDF
     public function show($id)
     {
-        return view('barcode/show', ['id' => $id]);
+        $doc = (new DocumentModel())->find($id);
+        if (!$doc) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Dokumen tidak ditemukan");
+        }
+
+        return view('barcode/show', ['doc' => $doc]);
     }
 
-    /**
-     * =============== GENERATE BARCODE ====================
-     */
+    // Generate QR code
     public function generate($id)
     {
-        $url = base_url('/barcode/show/' . $id); // diarahkan ke halaman show
+        $url = base_url('/barcode/show/' . $id); // link diarahkan ke show
 
-        $result = \Endroid\QrCode\Builder\Builder::create()
+        $result = Builder::create()
             ->data($url)
             ->size(300)
             ->margin(10)
@@ -81,22 +42,14 @@ class BarcodeController extends BaseController
             ->setBody($result->getString());
     }
 
-    /**
-     * =============== TAMPILKAN PDF ====================
-     */
+    // Tampilkan PDF
     public function file($id)
     {
         $doc = (new DocumentModel())->find($id);
-
-        if (!$doc) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Dokumen tidak ditemukan");
-        }
+        if (!$doc) throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 
         $filePath = WRITEPATH . 'uploads/' . $doc['filename'];
-
-        if (!file_exists($filePath)) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("File PDF tidak ditemukan");
-        }
+        if (!file_exists($filePath)) throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 
         return $this->response
             ->setHeader('Content-Type', 'application/pdf')

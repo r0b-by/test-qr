@@ -1,32 +1,12 @@
-<?= $this->extend('layouts/main') ?>
-<?= $this->section('content') ?>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
 
-<div class="container mt-4">
+<div class="max-w-sm mx-auto p-6 mt-10 bg-white shadow rounded text-center">
+    <h2 class="text-xl font-bold mb-4">Barcode Dokumen</h2>
 
-    <h3>Detail Dokumen</h3>
-    <hr>
+    <img src="<?= base_url('/barcode/generate/' . $doc['id']) ?>" class="mx-auto mb-4">
 
-    <p><strong>ID Dokumen:</strong> <?= esc($id) ?></p>
+    <p class="mb-4"><?= esc($doc['original_name']) ?></p>
 
-    <!-- Tampilkan QR Code -->
-    <h5>QR Code:</h5>
-    <img src="<?= base_url('barcode/generate/' . $id) ?>" alt="QR Code">
-
-    <hr>
-
-    <!-- Preview PDF -->
-    <h5>Preview Dokumen PDF:</h5>
-    <iframe 
-        src="<?= base_url('barcode/file/' . $id) ?>" 
-        width="100%" 
-        height="600px" 
-        style="border:1px solid #ccc;">
-    </iframe>
-
-    <div class="mt-3">
-        <a href="<?= base_url('/') ?>" class="btn btn-primary">Upload Lagi</a>
-    </div>
-
+    <a href="<?= base_url('/barcode/file/' . $doc['id']) ?>" target="_blank"
+       class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Buka PDF</a>
 </div>
-
-<?= $this->endSection() ?>
