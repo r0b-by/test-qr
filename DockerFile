@@ -26,3 +26,5 @@ RUN chown -R www-data:www-data /var/www/html/writable \
 
 # Jalankan migration & seeder otomatis saat container start
 CMD php spark migrate --all && php spark db:seed DatabaseSeeder && apache2-foreground
+
+#rename DockerFile to Dockerfile
