@@ -17,10 +17,12 @@ class CreateDocumentsTable extends Migration
             'filename' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 255,
+                'null'       => false,
             ],
             'original_name' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 255,
+                'null'       => false,
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -32,7 +34,8 @@ class CreateDocumentsTable extends Migration
             ],
         ]);
 
-        $this->forge->addKey('id', true);  
+        $this->forge->addKey('id', true);
+        $this->forge->addKey('created_at');
         $this->forge->createTable('documents');
     }
 

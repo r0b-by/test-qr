@@ -9,39 +9,52 @@ class DocumentSeeder extends Seeder
 {
     public function run()
     {
-        // Folder asal file PDF
         $sourceDir = FCPATH . 'uploads/';
-
-        // Folder tujuan writable/uploads
         $targetDir = WRITEPATH . 'uploads/';
+
+        // Create target directory if not exists
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);
         }
 
-        // Ambil semua file PDF di public/uploads
+        // Get all PDF files
         $files = glob($sourceDir . '*.pdf');
 
-        if (!$files) {
-            echo "Tidak ada file PDF di public/uploads!";
+        if (empty($files)) {
+            echo "⚠️  Tidak ada file PDF di {$sourceDir}\n";
+            echo "💡 Silakan tambahkan file PDF ke folder public/uploads/\n";
             return;
         }
 
         $docModel = new DocumentModel();
+        $successCount = 0;
 
         foreach ($files as $file) {
             $originalName = basename($file);
-            $newName = 'seed_' . time() . '_' . $originalName;
+            $newName = 'doc_' . time() . '_' . uniqid() . '_' . $originalName;
 
-            // Copy file ke writable/uploads
-            copy($file, $targetDir . $newName);
+            try {
+                // Copy file
+                if (copy($file, $targetDir . $newName)) {
+                    // Insert to database
+                    $docModel->insert([
+                        'filename'      => $newName,
+                        'original_name' => $originalName
+                    ]);
+                    
+                    echo "✅ Berhasil: {$originalName}\n";
+                    $successCount++;
+                } else {
+                    echo "❌ Gagal copy: {$originalName}\n";
+                }
+            } catch (\Exception $e) {
+                echo "❌ Error: {$originalName} - {$e->getMessage()}\n";
+            }
 
-            // Insert ke database
-            $docModel->insert([
-                'filename'      => $newName,
-                'original_name' => $originalName
-            ]);
-
-            echo "Berhasil mengirim file: $originalName\n";
+            // Small delay to ensure unique timestamps
+            usleep(100000); // 0.1 second
         }
+
+        echo "\n🎉 Seeding selesai! Total: {$successCount} file berhasil.\n";
     }
 }

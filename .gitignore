@@ -60,8 +60,8 @@ writable/session/*
 writable/uploads/*
 !writable/uploads/index.html
 
-writable/debugbar/*
-!writable/debugbar/.gitkeep
+writable/database/*
+!writable/database/index.html
 
 php_errors.log
 
@@ -85,42 +85,17 @@ phpunit
 # Composer
 #-------------------------
 vendor/
+composer.lock
 
 #-------------------------
-# IDE / Development Files
+# IDE Files
 #-------------------------
-
-# Modules Testing
-_modules/*
-
-# phpenv local config
-.php-version
-
-# Jetbrains editors (PHPStorm, etc)
-.idea/
-*.iml
-
-# NetBeans
-/nbproject/
-/build/
-/nbbuild/
-/dist/
-/nbdist/
-/nbactions.xml
-/nb-configuration.xml
-/.nb-gradle/
-
-# Sublime Text
-*.tmlanguage.cache
-*.tmPreferences.cache
-*.stTheme.cache
-*.sublime-workspace
-*.sublime-project
-.phpintel
-/api/
-
-# Visual Studio Code
 .vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
 
-/results/
-/phpunit*.xml
+#-------------------------
+# Node Modules
+#-------------------------
+node_modules/

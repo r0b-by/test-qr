@@ -1,20 +1,65 @@
-# Folder vendor tidak perlu disertakan (akan di-install via composer di Docker)
-vendor/
-
-# Folder node_modules tidak perlu disertakan
-node_modules/
-
-# Git repository tidak perlu disertakan
+# Git files
 .git/
+.gitignore
+.gitattributes
 
-# File lingkungan lokal
+# Environment files
 .env
+.env.local
+.env.*.local
+.env.example
 
-# Cache lokal CI4 (opsional, karena Docker akan buat baru)
-writable/cache/
-writable/session/
-writable/logs/
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
 
-# File IDE / sistem (opsional)
+# Logs (will be regenerated)
 *.log
-*.DS_Store
+writable/logs/*.log
+
+# Cache files (will be regenerated)
+writable/cache/*
+!writable/cache/.gitkeep
+writable/session/*
+!writable/session/.gitkeep
+
+# Database (will be created fresh)
+writable/database/*
+!writable/database/.gitkeep
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Test files
+tests/
+phpunit.xml
+.phpunit.result.cache
+coverage/
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Build files
+.editorconfig
+.php_cs
+.php_cs.cache
+phpcs.xml
+phpstan.neon
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
