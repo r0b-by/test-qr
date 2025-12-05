@@ -1,30 +1,37 @@
-# Base image PHP 8.2 dengan Apache
+# Base PHP 8.2 + Apache
 FROM php:8.2-apache
 
-# Set working directory
+# Working directory
 WORKDIR /var/www/html
 
-# Install dependencies
+# Install OS packages
 RUN apt-get update && apt-get install -y \
     sqlite3 \
     libsqlite3-dev \
     unzip \
-    git \
-    && docker-php-ext-install pdo pdo_sqlite \
-    && docker-php-ext-enable pdo_sqlite sqlite3 \
-    && apt-get clean
+    git
 
-# Aktifkan mod_rewrite Apache
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_sqlite
+RUN docker-php-ext-enable pdo pdo_sqlite
+
+# Enable Apache mod_rewrite for CodeIgniter 4
 RUN a2enmod rewrite
 
-# Copy project ke container
+# --- FIX PENTING UNTUK RENDER ---
+# Pastikan folder writable/db sudah ada sebelum COPY
+RUN mkdir -p /var/www/html/writable/db
+
+# (Opsional) Buat file SQLite jika belum ada agar migrate tidak error
+RUN touch /var/www/html/writable/db/documents.sqlite
+RUN chmod 777 /var/www/html/writable/db/documents.sqlite
+
+# Copy project
 COPY . /var/www/html
 
-# Set permission writable/
+# Permission untuk CI4 writable
 RUN chown -R www-data:www-data /var/www/html/writable \
-    && chmod -R 755 /var/www/html/writable
+    && chmod -R 775 /var/www/html/writable
 
-# Jalankan migration & seeder otomatis saat container start
-CMD php spark migrate --all && php spark db:seed DatabaseSeeder && apache2-foreground
-
-#rename DockerFile to Dockerile
+# Jalankan migrate + seeder setelah container start
+CMD ["bash", "-c", "php spark migrate --all && php spark db:seed DatabaseSeeder && apache2-foreground"]
