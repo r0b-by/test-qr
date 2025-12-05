@@ -1,0 +1,28 @@
+# Base image PHP 8.2 dengan Apache
+FROM php:8.2-apache
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    libsqlite3-dev \
+    unzip \
+    git \
+    && docker-php-ext-install pdo pdo_sqlite \
+    && docker-php-ext-enable pdo_sqlite sqlite3 \
+    && apt-get clean
+
+# Aktifkan mod_rewrite Apache
+RUN a2enmod rewrite
+
+# Copy project ke container
+COPY . /var/www/html
+
+# Set permission writable/
+RUN chown -R www-data:www-data /var/www/html/writable \
+    && chmod -R 755 /var/www/html/writable
+
+# Jalankan migration & seeder otomatis saat container start
+CMD php spark migrate --all && php spark db:seed DatabaseSeeder && apache2-foreground

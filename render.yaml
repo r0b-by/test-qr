@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ci4-barcode
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: CI_ENVIRONMENT
+        value: production
+      - key: app.baseURL
+        value: https://ci4-barcode.onrender.com/
+    disk:
+      name: uploads
+      mountPath: /var/www/html/writable/uploads
+      sizeGB: 1

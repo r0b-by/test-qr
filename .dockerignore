@@ -1,0 +1,20 @@
+# Folder vendor tidak perlu disertakan (akan di-install via composer di Docker)
+vendor/
+
+# Folder node_modules tidak perlu disertakan
+node_modules/
+
+# Git repository tidak perlu disertakan
+.git/
+
+# File lingkungan lokal
+.env
+
+# Cache lokal CI4 (opsional, karena Docker akan buat baru)
+writable/cache/
+writable/session/
+writable/logs/
+
+# File IDE / sistem (opsional)
+*.log
+*.DS_Store
